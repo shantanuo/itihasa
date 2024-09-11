@@ -4,7 +4,6 @@ import pandas as pd
 import numpy as np
 
 from openai import APIError, OpenAI
-from sklearn.metrics.pairwise import cosine_similarity
 client = OpenAI(api_key="sk-proj-xxxx")
 
 index_path = "res/index.bin"
