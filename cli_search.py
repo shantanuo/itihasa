@@ -3,7 +3,9 @@ import faiss
 import pandas as pd
 import numpy as np
 
-from openai.embeddings_utils import get_embedding
+from openai import APIError, OpenAI
+from sklearn.metrics.pairwise import cosine_similarity
+client = OpenAI(api_key="sk-proj-xxxx")
 
 index_path = "res/index.bin"
 info_path = "res/combined.csv"
@@ -19,13 +21,20 @@ def init():
     index = faiss.read_index(index_path)
     return df, index
 
-
+def get_text_embedding(text):
+    embedding = (
+        client.embeddings.create(input=text, model="text-embedding-ada-002")
+        .data[0]
+        .embedding
+    )
+    return embedding
+	
 def search_index(index, query, k=5):
-    query_emb = get_embedding(query, engine="text-embedding-ada-002")
+    query_emb = get_text_embedding(query)
     query_emb = np.array(query_emb).reshape(1, -1)
     D, I = index.search(query_emb, k)
     return D, I
-
+	
 
 def main():
     df, index = init()    
